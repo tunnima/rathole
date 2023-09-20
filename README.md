@@ -1,3 +1,72 @@
+map: https://github.com/tunnima/my-docs
+
+# Installation:
+https://github.com/rapiz1/rathole/releases
+
+./rathole --genkey
+
+# Confugiration:
+## Server A.A.A.A:
+```server
+[server]
+bind_addr = "0.0.0.0:8001"
+default_token = "X"
+
+[server.transport]
+type = "noise"
+[server.transport.noise]
+local_private_key = "kian-private"
+
+[server.services.oc]
+bind_addr = "0.0.0.0:3125"
+```
+=========================
+## Client B.B.B.B:
+```client
+[client]
+remote_addr = "A.A.A.A:8001"
+default_token = "X"
+
+[client.transport]
+type = "noise"
+[client.transport.noise]
+remote_public_key = "kian-public"
+
+[client.services.oc]
+local_addr = "127.0.0.1:4445"
+```
+----------------------------------------------------------------------
+
+## Server A.A.A.A:
+./rathole server.toml
+
+cat server.toml
+```server
+# server.toml
+[server]
+bind_addr = "0.0.0.0:8002" # `2333` specifies the port that rathole listens for clients
+
+[server.services.my_nas_ssh]
+token = "X" # Token that is used to authenticate the client for the service. Change to a arbitrary value.
+bind_addr = "0.0.0.0:3124" # `5202` specifies the port that exposes `my_nas_ssh` to the Internet
+server
+```
+## Client B.B.B.B:
+./rathole client.toml
+
+vi client.toml
+```client
+# client.toml
+[client]
+remote_addr = "A.A.A.A:8002" # The address of the server. The port must be the same with the port in `server.bind_addr`
+
+[client.services.my_nas_ssh]
+token = "X" # Must be the same with the server to pass the validation
+local_addr = "127.0.0.1:4445" # The address of the service that needs to be forwarded
+```
+
+
+# MAIN
 # rathole
 
 ![rathole-logo](./docs/img/rathole-logo.png)
